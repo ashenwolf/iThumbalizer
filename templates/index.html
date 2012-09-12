@@ -1,0 +1,20 @@
+<html>
+<head>
+	<title>iThumbalize Me</title>
+</head>
+<body>
+	<div>
+		<h1>iThumbalize Me!</h1><hr>
+		<form action="{{ upload.nexusone }}" accept-charset="utf-8" method="POST" enctype="multipart/form-data">
+			<label>Border for: 
+				<select name="flavor">
+					<option value="nexusone">Google Nexus One</option>
+					<option value="ipad2">iPad 2 (black)</option>
+				</select>
+			</label>
+			<label>Screenshot file: <input type="file" name="screenshot" value=""></label>
+			<input type="submit" name="post" value="iThumbalize Me!">
+		</form>
+	</div>
+</body>
+</html>
