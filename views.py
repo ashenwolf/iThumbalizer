@@ -35,7 +35,7 @@ class FlavorGenericFixed(object):
     def __init__(self, source):
         self.source = images.resize(source, self.width, self.height)
 
-        base_path = os.path.join(os.path.split(__file__)[0], 'base\\%s\\' % self.flavor)
+        base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor)
         self.back = open(os.path.join(base_path, 'back.png'), "rb").read()
         self.reflection = open(os.path.join(base_path, 'reflection.png'), "rb").read()
 
