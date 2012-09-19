@@ -2,7 +2,6 @@ import os
 import StringIO
 from PIL import Image
 
-
 import webapp2
 from webapp2_extras import jinja2
 
@@ -43,17 +42,22 @@ class FlavorGenericFixed(object):
         self.target_width = back.width
         self.target_height = back.height
 
-#        im_back = Image.open(os.path.join(base_path, 'back.png'))
-#       im_cover = Image.open(os.path.join(base_path, 'reflection.png'))
+        buf = StringIO.StringIO()
+        
+
+        self.im_back = Image.open(os.path.join(base_path, 'back.png'))
+        self.im_cover = Image.open(os.path.join(base_path, 'reflection.png'))
         #im_contents = Image.fromstring('RGBA', (blob_image.width, blob_image.height), blob_image)
         #src_ing = images.Image(blob_image)
 
     def renderImage(self):
         return images.composite(
             [
-            (self.back,         0,              0,                  1.0,    images.TOP_LEFT),
+#            (self.back,         0,              0,                  1.0,    images.TOP_LEFT),
+            (self.im_back,         0,              0,                  1.0,    images.TOP_LEFT),
             (self.source,       self.offset_x,  self.offset_y,      1.0,    images.TOP_LEFT),
-            (self.reflection,   0,              0,                  1.0,    images.TOP_LEFT),
+#            (self.reflection,   0,              0,                  1.0,    images.TOP_LEFT),
+            (self.im_cover,   0,              0,                  1.0,    images.TOP_LEFT),
             ],
             self.target_width,
             self.target_height
@@ -88,4 +92,3 @@ class MakeNexusOne(blobstore_handlers.BlobstoreUploadHandler):
 
         self.response.headers['Content-Type'] = 'image/png'
         self.response.out.write(image.renderImage())
-#       self.redirect('/?image=%s' % blob_info.key())
