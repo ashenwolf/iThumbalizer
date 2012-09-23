@@ -12,13 +12,13 @@
 						</select>
 					</label>
 
-					<input type="file" name="screenshot" id="screenshot" style="display: none;" value=""></input>
-					<label>Screenshot file: <br>
+					<label for="screenshot">Screenshot file:</label><br>
+					<input type="file" name="screenshot" id="screenshot" style="display: none;"></input>
 						<div class="input-append">
 							<input id="screenshot-ui" class="input-large" type="text" disabled />
 							<a class="btn" onclick="$('input[id=screenshot]').click();">Browse</a>
 						</div>
-					</label>
+					
 					<hr>
 					<input type="submit" name="post" value="Thumbalize It!" class="btn btn-warning btn-large" />
 				</form>
