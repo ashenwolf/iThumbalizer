@@ -18,7 +18,7 @@ import webapp2
 import jinja2
 import os.path
 
-from views import MainHandler, MakeNexusOne
+from views import MainHandler, MakeScreenshot
 
 class NullUndefined(jinja2.Undefined):
     def __int__(self):
@@ -53,5 +53,5 @@ config = {
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
-	('/nexusone', MakeNexusOne),
+	('/upload', MakeScreenshot),
 	], debug=True, config=config)

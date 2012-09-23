@@ -1,20 +1,57 @@
-<html>
-<head>
-	<title>iThumbalize Me</title>
-</head>
-<body>
-	<div>
-		<h1>iThumbalize Me!</h1><hr>
-		<form action="{{ upload.nexusone }}" accept-charset="utf-8" method="POST" enctype="multipart/form-data">
-			<label>Border for: 
-				<select name="flavor">
-					<option value="nexusone">Google Nexus One</option>
-					<option value="ipad2">iPad 2 (black)</option>
-				</select>
-			</label>
-			<label>Screenshot file: <input type="file" name="screenshot" value=""></label>
-			<input type="submit" name="post" value="iThumbalize Me!">
-		</form>
-	</div>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block content %}
+		<div class="row">
+			<div class="span4">
+				<form action="{{ upload }}" id="upload-form" accept-charset="utf-8" method="POST" enctype="multipart/form-data">
+					<label>Border for: <br>
+						<select name="flavor" class="span4">
+							<option value="safari">Safari</option>
+							<option value="nexusone">Google Nexus One</option>
+							<option value="ipad2">iPad 2 (black)</option>
+						</select>
+					</label>
+
+					<input type="file" name="screenshot" id="screenshot" style="display: none;" value=""></input>
+					<label>Screenshot file: <br>
+						<div class="input-append">
+							<input id="screenshot-ui" class="input-large" type="text" disabled />
+							<a class="btn" onclick="$('input[id=screenshot]').click();">Browse</a>
+						</div>
+					</label>
+					<hr>
+					<input type="submit" name="post" value="Thumbalize It!" class="btn btn-warning btn-large" />
+				</form>
+			</div>
+			<div class="span8">
+				Result:<br />
+				<div id="preview-holder">
+					<img src="http://placehold.it/600x800" alt="Thumbalized!" />
+				</div>
+			</div>
+		</div>
+
+{% endblock %}
+
+{% block js %}
+	<script src="http://yandex.st/jquery/form/3.14/jquery.form.js" type="text/javascript" charset="utf-8"></script>
+
+	<script type="text/javascript">
+
+	function processJson(data){
+	     $("#preview-holder").html($("<img />").attr("src", data["preview"]));
+	}
+
+	$(document).ready(function() {
+		$('#screenshot').change(function() {
+		   $('#screenshot-ui').val($(this).val());
+		});
+
+
+		$('#upload-form').ajaxForm({ 
+        	dataType:  'json', 
+        	success:   processJson 
+    	});
+	});
+	</script>
+{% endblock %}
