@@ -189,6 +189,7 @@ class MakeScreenshot(blobstore_handlers.BlobstoreUploadHandler):
             "timestamp": datetime.datetime.today().isoformat(),
             "original": str(images.get_serving_url(img, 0)),
             "preview": str(images.get_serving_url(img)),
+            'upload': blobstore.create_upload_url('/upload'),
         }
 
         self.response.out.write(json.dumps(result))

@@ -33,8 +33,17 @@ body {
 	filter: progid:dximagetransform.microsoft.gradient(enabled=false);
 }
 
+#content {
+	padding: 16px;
+}
+
 #footer a {
 	color: #000;
+}
+
+#footer-copyright {
+	text-align: right;
+	padding: 5px 30px;
 }
 
 #preview-span {

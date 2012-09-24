@@ -30,7 +30,7 @@
 			</div>
 			<div class="span7" id="preview-span">
 				<div id="preview-holder">
-					<h2>Your wrapped screenshot will be here!</h2>
+					<h2>Your wrapped screenshot will appear here!</h2>
 				</div>
 			</div>
 		</div>
@@ -41,9 +41,14 @@
 	<script src="http://yandex.st/jquery/form/3.14/jquery.form.js" type="text/javascript" charset="utf-8"></script>
 
 	<script type="text/javascript">
-
 	function processJson(data){
 	     $("#preview-holder").html($("<img />").attr("src", data["preview"]));
+
+		$('#upload-form').ajaxForm({ 
+        	dataType: 'json', 
+        	success: processJson,
+        	url: data.upload,
+    	});
 	}
 
 	$(document).ready(function() {
@@ -53,8 +58,8 @@
 
 
 		$('#upload-form').ajaxForm({ 
-        	dataType:  'json', 
-        	success:   processJson 
+        	dataType: 'json', 
+        	success: processJson,
     	});
 	});
 	</script>
