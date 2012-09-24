@@ -1,16 +1,19 @@
 body {
   	margin: 20px auto;
+
+  	background: url(/static/images/noisy_grid.png);
 }
 
 .container {
-	border: silver solid 1px;
+	border: lightGrey solid 1px;
 	border-radius: 5px;
 	overflow: hidden;
 
-  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
-     -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.055);
+	background-color: #fff;
 
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+     -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 #header, #footer {
@@ -32,4 +35,13 @@ body {
 
 #footer a {
 	color: #000;
+}
+
+#preview-span {
+	margin-left: 0px;
+}
+
+#preview-holder {
+	text-align: center;
+	padding-right: 16px;
 }
