@@ -20,11 +20,14 @@ import os.path
 
 from views import MainHandler, MakeScreenshot
 
+
 class NullUndefined(jinja2.Undefined):
     def __int__(self):
         return ''
+
     def __float__(self):
         return ''
+
     def __getattr__(self, name):
         return ''
 
@@ -32,9 +35,9 @@ config = {
 #    'webapp2_extras.i18n': {
 #        'translations_path': os.path.join(os.path.dirname(__file__), 'locale'),
 #        },
-    'webapp2_extras.jinja2' : {
+    'webapp2_extras.jinja2': {
         'environment_args': {
-            'extensions': ['jinja2.ext.autoescape', 'jinja2.ext.with_'], #'jinja2.ext.i18n', 
+            'extensions': ['jinja2.ext.autoescape', 'jinja2.ext.with_'],  # 'jinja2.ext.i18n',
             'undefined': NullUndefined,
             },
 #        'filters': {
@@ -43,15 +46,15 @@ config = {
 #            'htmlify': misc.filters.htmlify,
 #            'datetime': misc.filters.format_datetime,
 #            },
-#	    'globals': {
+#       'globals': {
 #            'url': webapp2.uri_for,
 #            'settings': skolladmin.models.SiteSettings,
-#	        },
+#           },
         },
     'template_path': os.path.join(os.path.dirname(__file__), 'templates/'),
-    }   
+    }
 
 app = webapp2.WSGIApplication([
-	('/', MainHandler),
-	('/upload', MakeScreenshot),
-	], debug=True, config=config)
+    ('/', MainHandler),
+    ('/upload', MakeScreenshot),
+    ], debug=True, config=config)

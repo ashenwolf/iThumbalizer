@@ -17,6 +17,7 @@ RIGHT = 1
 BOTTOM = 2
 LEFT = 3
 
+
 class BaseHandler(webapp2.RequestHandler):
     @webapp2.cached_property
     def jinja2(self):
@@ -28,12 +29,14 @@ class BaseHandler(webapp2.RequestHandler):
         rv = self.jinja2.render_template(_template, **context)
         self.response.write(rv)
 
+
 class MainHandler(BaseHandler):
     def get(self):
         context = {
             'upload': blobstore.create_upload_url('/upload'),
             }
         self.render_response('index.html', **context)
+
 
 class FlavorGenericResponsive(object):
     def _add_image(self, part):
@@ -57,12 +60,16 @@ class FlavorGenericResponsive(object):
         result = Image.new("RGBA", (width, height))
 
         for image in image_list:
-            if isinstance(image[0], Image.Image): working = image[0]
-            else: working = Image.open(image[0])
+            if isinstance(image[0], Image.Image):
+                working = image[0]
+            else:
+                working = Image.open(image[0])
 
             image_size = list(working.size)
-            if image[3] >= 0: image_size[0] = image[3]
-            if image[4] >= 0: image_size[1] = image[4]
+            if image[3] >= 0:
+                image_size[0] = image[3]
+            if image[4] >= 0:
+                image_size[1] = image[4]
 
             resized = working.resize(image_size)
             result.paste(resized, (image[1], image[2]), resized)
@@ -149,6 +156,7 @@ class FlavorGenericFixed(object):
 
         return blob_key
 
+
 class FlavorSafari(FlavorGenericResponsive):
     flavor = "safari"
     margin = (93, 50, 50, 36)
@@ -162,12 +170,14 @@ class FlavorNexusOne(FlavorGenericFixed):
     offset_y = 171
     flavor = "nexusone"
 
+
 class FlavorIpad2(FlavorGenericFixed):
     width = 1018
     height = 1358
     offset_x = 139
     offset_y = 154
     flavor = "ipad2"
+
 
 class MakeScreenshot(blobstore_handlers.BlobstoreUploadHandler):
     flavors = {
