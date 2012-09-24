@@ -46,18 +46,32 @@
 	<script src="http://yandex.st/jquery/form/3.14/jquery.form.js" type="text/javascript" charset="utf-8"></script>
 
 	<script type="text/javascript">
+	var linksTemplate = '<br> \
+	<a class="badge badge-warning" href="%IMAGE%=s160" target="_blank">160px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s320" target="_blank">320px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s512" target="_blank">512px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s800" target="_blank">800px</a> \
+	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">1024px</a> \
+	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">Original</a> \
+	';
+
 	function beforeSubmit() {
 		$('#preview-holder').html("");
 	    $("#progress").show();
 	}
 
 	function processError() {
-	     $("#preview-holder").html($("<h2 />").text("Error occured while processing your image."));
+	     $("#progress").hide();
+	     $("#preview-holder").html($("<h2 />").text("Error occured while processing your image. Probably your image is too large."));
 	}
 
 	function processJson(data){
-	     $("#preview-holder").html($("<img />").attr("src", data["preview"]));
-	     $("#progress").hide();
+	    $("#progress").hide();
+	    $("#preview-holder").html("")
+	    	.append($("<img />").attr("src", data["preview"]))
+	    	.append(linksTemplate.replace(/%IMAGE%/g, data["preview"]));
+
+		$('a[rel=tooltip]').tooltip();
 
 		$('#upload-form').ajaxForm({ 
         	dataType: 'json', 
@@ -72,7 +86,6 @@
 		$('#screenshot').change(function() {
 		   $('#screenshot-ui').val($(this).val());
 		});
-
 
 		$('#upload-form').ajaxForm({ 
         	dataType: 'json', 
