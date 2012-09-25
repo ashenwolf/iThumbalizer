@@ -43,7 +43,7 @@ class FlavorGenericResponsive(object):
         file_name = "".join([word.lower()[0] for word in part.split("_")]) + ".png"
         self.__dict__[part] = open(os.path.join(self.base_path, file_name), "rb")
 
-    def __init__(self, source):
+    def __init__(self, source, fit=None):
         self.source = source
         self.base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor)
 
@@ -117,8 +117,12 @@ class FlavorGenericResponsive(object):
 
 
 class FlavorGenericFixed(object):
-    def __init__(self, source):
+    def __init__(self, source, fit=None):
         self.source = source
+        if fit in ["all", "width", "height"]:
+            self.fit = fit
+        else:
+            self.fit = None
         base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor)
         self.back = open(os.path.join(base_path, 'back.png'), "rb")
         self.reflection = open(os.path.join(base_path, 'reflection.png'), "rb")
@@ -135,10 +139,26 @@ class FlavorGenericFixed(object):
 
         return result
 
+    def fitImage(self):
+        image = Image.open(self.source)
+
+        if self.fit == "all":
+            k = min(float(self.width) / image.size[0], float(self.height) / image.size[1])
+        elif self.fit == "width":
+            k = float(self.width) / image.size[0]
+        elif self.fit == "height":
+            k = float(self.height) / image.size[1]
+        else:
+            return image.resize((self.width, self.height))
+
+        i1 = image.resize((long(image.size[0] * k), long(image.size[1] * k)))
+        i2 = i1.crop((0, 0, self.width, self.height))
+        return i2
+
     def renderImage(self):
         img = self.mergeImages([
             (self.back, 0, 0),
-            (Image.open(self.source).resize((self.width, self.height)).convert("RGBA"), self.offset_x, self.offset_y),
+            (self.fitImage().convert("RGBA"), self.offset_x, self.offset_y),
             (self.reflection, 0, 0),
             ])
 
@@ -190,8 +210,9 @@ class MakeScreenshot(blobstore_handlers.BlobstoreUploadHandler):
         upload_files = self.get_uploads('screenshot')
         blob_info = upload_files[0]
         flavor = self.request.POST["flavor"]
+        fit = self.request.POST["fit"]
         source = StringIO.StringIO(blobstore.BlobReader(blob_info).read())
-        image = self.flavors[flavor](source)
+        image = self.flavors[flavor](source, fit)
         blob_info.delete()
         img = image.renderImage()
 
@@ -203,7 +224,3 @@ class MakeScreenshot(blobstore_handlers.BlobstoreUploadHandler):
         }
 
         self.response.out.write(json.dumps(result))
-        #self.redirect()
-        #self.response.headers['Content-Type'] = 'image/png'
-        #self.send_blob(img)
-        #self.response.out.write()

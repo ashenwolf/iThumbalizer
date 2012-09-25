@@ -38,12 +38,12 @@ body {
 }
 
 #footer a {
-	color: #000;
+	color: #fff;
 }
 
 #footer-copyright {
 	text-align: right;
-	padding: 5px 30px;
+	padding: 5px 40px;
 }
 
 #preview-span {

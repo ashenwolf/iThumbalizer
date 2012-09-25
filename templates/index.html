@@ -12,6 +12,16 @@
 						</select>
 					</label>
 
+					<label>Fit: </label>
+					<input type="hidden" id="fit" name="fit" value="none">
+					<div class="btn-group" id="fit-group" data-toggle="buttons-radio">
+					  <span class="btn btn-small active" data-fit="none">Stretch</span>
+					  <span class="btn btn-small" data-fit="all">Max side</span>
+					  <span class="btn btn-small" data-fit="width">Width</span>
+					  <span class="btn btn-small" data-fit="height">Height</span>
+					</div>
+					<br>
+
 					<label for="screenshot">Screenshot file:</label>
 					<input type="file" name="screenshot" id="screenshot" style="display: none;" />
 						<div class="input-append">
@@ -47,13 +57,16 @@
 
 	<script type="text/javascript">
 	var linksTemplate = '<br> \
-	<a class="badge badge-warning" href="%IMAGE%=s160" target="_blank">160px</a> \
-	<a class="badge badge-warning" href="%IMAGE%=s320" target="_blank">320px</a> \
-	<a class="badge badge-warning" href="%IMAGE%=s512" target="_blank">512px</a> \
-	<a class="badge badge-warning" href="%IMAGE%=s800" target="_blank">800px</a> \
-	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">1024px</a> \
-	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">Original</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s160"  target="_blank">160px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s320"  target="_blank">320px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s512"  target="_blank">512px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s800"  target="_blank">800px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s1024" target="_blank">1024px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s0" target="_blank">Original</a> \
 	';
+
+//	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">1024px</a> \
+//	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">Original</a> \
 
 	function beforeSubmit() {
 		$('#preview-holder').html("");
@@ -71,7 +84,7 @@
 	    	.append($("<img />").attr("src", data["preview"]))
 	    	.append(linksTemplate.replace(/%IMAGE%/g, data["preview"]));
 
-		$('a[rel=tooltip]').tooltip();
+		//$('a[rel=tooltip]').tooltip();
 
 		$('#upload-form').ajaxForm({ 
         	dataType: 'json', 
@@ -93,6 +106,10 @@
         	error: processError,
         	success: processJson,
     	});
+
+		$("#fit-group span").click(function() {
+			$("#fit").val($(this).data("fit"));
+		});		
 	});
 	</script>
 {% endblock %}
