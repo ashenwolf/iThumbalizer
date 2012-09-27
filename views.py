@@ -136,11 +136,14 @@ class FlavorGenericFixed(FlavorGenericBase):
 
     def fitImage(self):
         image = Image.open(self.source)
+        x, y = 0, 0
 
         if self.fit == "all":
             k = min(float(self.width) / image.size[0], float(self.height) / image.size[1])
         elif self.fit == "crop":
             k = max(float(self.width) / image.size[0], float(self.height) / image.size[1])
+            x = (long(image.size[0] * k) - self.width) / 2
+            y = (long(image.size[1] * k) - self.height) / 2
         elif self.fit == "width":
             k = float(self.width) / image.size[0]
         elif self.fit == "height":
@@ -149,7 +152,7 @@ class FlavorGenericFixed(FlavorGenericBase):
             return image.resize((self.width, self.height))
 
         i1 = image.resize((long(image.size[0] * k), long(image.size[1] * k)))
-        i2 = i1.crop((0, 0, self.width, self.height))
+        i2 = i1.crop((x, y, self.width + x, self.height + y))
         return i2
 
     def renderImage(self):
