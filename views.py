@@ -18,34 +18,29 @@ BOTTOM = 2
 LEFT = 3
 
 
-class BaseHandler(webapp2.RequestHandler):
-    @webapp2.cached_property
-    def jinja2(self):
-        # Returns a Jinja2 renderer cached in the app registry.
-        return jinja2.get_jinja2(app=self.app)
-
-    def render_response(self, _template, **context):
-        # Renders a template and writes the result to the response.
-        rv = self.jinja2.render_template(_template, **context)
-        self.response.write(rv)
+############################################
+################# Flavors ##################
+############################################
 
 
-class MainHandler(BaseHandler):
-    def get(self):
-        context = {
-            'upload': blobstore.create_upload_url('/upload'),
-            }
-        self.render_response('index.html', **context)
+class FlavorGenericBase(object):
+    @property
+    def flavor_path(self):
+        return self.flavor.replace(" ", "").lower()
+
+    @classmethod
+    def get_flavor_path(cls):
+        return cls.flavor.replace(" ", "").lower()
 
 
-class FlavorGenericResponsive(object):
+class FlavorGenericResponsive(FlavorGenericBase):
     def _add_image(self, part):
         file_name = "".join([word.lower()[0] for word in part.split("_")]) + ".png"
         self.__dict__[part] = open(os.path.join(self.base_path, file_name), "rb")
 
     def __init__(self, source, fit=None):
         self.source = source
-        self.base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor)
+        self.base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor_path)
 
         self._add_image("top_left")
         self._add_image("top_span")
@@ -116,14 +111,14 @@ class FlavorGenericResponsive(object):
         return blob_key
 
 
-class FlavorGenericFixed(object):
+class FlavorGenericFixed(FlavorGenericBase):
     def __init__(self, source, fit=None):
         self.source = source
-        if fit in ["all", "width", "height"]:
+        if fit in ["all", "crop", "width", "height"]:
             self.fit = fit
         else:
             self.fit = None
-        base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor)
+        base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor_path)
         self.back = open(os.path.join(base_path, 'back.png'), "rb")
         self.reflection = open(os.path.join(base_path, 'reflection.png'), "rb")
 
@@ -144,6 +139,8 @@ class FlavorGenericFixed(object):
 
         if self.fit == "all":
             k = min(float(self.width) / image.size[0], float(self.height) / image.size[1])
+        elif self.fit == "crop":
+            k = max(float(self.width) / image.size[0], float(self.height) / image.size[1])
         elif self.fit == "width":
             k = float(self.width) / image.size[0]
         elif self.fit == "height":
@@ -178,33 +175,90 @@ class FlavorGenericFixed(object):
 
 
 class FlavorSafari(FlavorGenericResponsive):
-    flavor = "safari"
-    margin = (93, 50, 50, 36)
-    span = (93, 385, 50, 477)
+    flavor = "Safari"
+    margin = (94, 52, 50, 36)
+    span = (94, 390, 50, 477)
+    no_options = True
 
 
 class FlavorNexusOne(FlavorGenericFixed):
-    width = 480
-    height = 760
-    offset_x = 67
-    offset_y = 171
-    flavor = "nexusone"
+    flavor = "Nexus One"
+
+    width = 380
+    height = 625
+    offset_x = 36
+    offset_y = 102
+    variants = None
+    orientations = None
 
 
 class FlavorIpad2(FlavorGenericFixed):
-    width = 1018
-    height = 1358
-    offset_x = 139
-    offset_y = 154
-    flavor = "ipad2"
+    flavor = "iPad 2"
+
+    width = 768
+    height = 1002  # 1024
+    offset_x = 105
+    offset_y = 134
+    variants = ["White", "Black"]
+    orientations = ["Portrait", "Landscape"]
+
+
+class FlavorIpad2White(FlavorGenericFixed):
+    flavor = "iPad 2 White"
+
+    width = 768
+    height = 1002  # 1024
+    offset_x = 105
+    offset_y = 134
+    variants = ["White", "Black"]
+    orientations = ["Portrait", "Landscape"]
+
+
+class FlavorIphone4(FlavorGenericFixed):
+    flavor = "iPhone 4"
+
+    width = 680
+    height = 960
+    offset_x = 44
+    offset_y = 224
+    variants = None
+    orientations = None
+
+
+flavors = [FlavorIpad2, FlavorIpad2White, FlavorIphone4, FlavorNexusOne, FlavorSafari]
+
+############################################
+################# Handlers #################
+############################################
+
+
+class BaseHandler(webapp2.RequestHandler):
+    @webapp2.cached_property
+    def jinja2(self):
+        # Returns a Jinja2 renderer cached in the app registry.
+        return jinja2.get_jinja2(app=self.app)
+
+    def render_response(self, _template, **context):
+        # Renders a template and writes the result to the response.
+        rv = self.jinja2.render_template(_template, **context)
+        self.response.write(rv)
+
+
+class MainHandler(BaseHandler):
+    def get(self):
+        context = {
+            "flavors": flavors,
+            'upload': blobstore.create_upload_url('/upload'),
+            }
+        self.render_response('index.html', **context)
 
 
 class MakeScreenshot(blobstore_handlers.BlobstoreUploadHandler):
-    flavors = {
-        "nexusone": FlavorNexusOne,
-        "ipad2": FlavorIpad2,
-        "safari": FlavorSafari,
-    }
+    def _find_flavor(self, flavor):
+        for f in flavors:
+            if flavor == f.get_flavor_path():
+                return f
+        return None
 
     def post(self):
         upload_files = self.get_uploads('screenshot')
@@ -212,7 +266,7 @@ class MakeScreenshot(blobstore_handlers.BlobstoreUploadHandler):
         flavor = self.request.POST["flavor"]
         fit = self.request.POST["fit"]
         source = StringIO.StringIO(blobstore.BlobReader(blob_info).read())
-        image = self.flavors[flavor](source, fit)
+        image = self._find_flavor(flavor)(source, fit)
         blob_info.delete()
         img = image.renderImage()
 

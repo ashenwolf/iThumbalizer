@@ -2,41 +2,39 @@
 
 {% block content %}
 		<div class="row">
-			<div class="span4">
+			<div class="span5">
 				<form action="{{ upload }}" id="upload-form" accept-charset="utf-8" method="POST" enctype="multipart/form-data">
 					<label>Border for: <br>
-						<select name="flavor" class="span4">
-							<option value="safari">Safari</option>
-							<option value="nexusone">Google Nexus One</option>
-							<option value="ipad2">iPad 2 (black)</option>
+						<select name="flavor" id="flavor" class="span5">
+							{%  for f in flavors %}
+							<option value="{{ f.get_flavor_path() }}">{{ f.flavor }}</option>
+							{% endfor %}
 						</select>
 					</label>
 
-					<label>Fit: </label>
-					<input type="hidden" id="fit" name="fit" value="none">
-					<div class="btn-group" id="fit-group" data-toggle="buttons-radio">
-					  <span class="btn btn-small active" data-fit="none">Stretch</span>
-					  <span class="btn btn-small" data-fit="all">Max side</span>
-					  <span class="btn btn-small" data-fit="width">Width</span>
-					  <span class="btn btn-small" data-fit="height">Height</span>
+					<div id="options">
+						<label>Fit: </label>
+						<input type="hidden" id="fit" name="fit" value="none">
+						<div class="btn-group" id="fit-group" data-toggle="buttons-radio">
+						  <span class="btn btn-small active" data-fit="none">Stretch</span>
+						  <span class="btn btn-small" data-fit="all">All</span>
+						  <span class="btn btn-small" data-fit="crop">Crop</span>
+						  <span class="btn btn-small" data-fit="width">Width</span>
+						  <span class="btn btn-small" data-fit="height">Height</span>
+						</div>
+						<br>
 					</div>
-					<br>
 
 					<label for="screenshot">Screenshot file:</label>
 					<input type="file" name="screenshot" id="screenshot" style="display: none;" />
 						<div class="input-append">
-							<input id="screenshot-ui" class="input-large" type="text" disabled />
+							<input id="screenshot-ui" class="span4" type="text" disabled />
 							<a class="btn" onclick="$('input[id=screenshot]').click();">Browse</a>
 						</div>
 					
 					<hr>
 					<input type="submit" name="post" value="Thumbalize!" class="btn btn-warning btn-large pull-right" />
 				</form>
-			</div>
-			<div class="span1">
-				<div id="arrow" style="text-align: center;">
-					<h2>&rarr;</h2>
-				</div>
 			</div>
 			<div class="span7" id="preview-span">
 				<div id="progress">
@@ -61,12 +59,17 @@
 	<a class="badge badge-warning" href="%IMAGE%=s320"  target="_blank">320px</a> \
 	<a class="badge badge-warning" href="%IMAGE%=s512"  target="_blank">512px</a> \
 	<a class="badge badge-warning" href="%IMAGE%=s800"  target="_blank">800px</a> \
-	<a class="badge badge-warning" href="%IMAGE%=s1024" target="_blank">1024px</a> \
+	<a class="badge badge-warning" href="%IMAGE%=s1024" tar get="_blank">1024px</a> \
 	<a class="badge badge-warning" href="%IMAGE%=s0" target="_blank">Original</a> \
 	';
 
 //	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">1024px</a> \
 //	<a class="badge" rel="tooltip" data-placement="bottom" title="Available only for premium users" href="#">Original</a> \
+
+	var hide_options = {
+		{%  for f in flavors %}"{{ f.get_flavor_path() }}": {% if f.no_options %}true{% else %}false{% endif %},
+		{% endfor %}
+	};
 
 	function beforeSubmit() {
 		$('#preview-holder').html("");
@@ -105,6 +108,13 @@
         	beforeSubmit: beforeSubmit,
         	error: processError,
         	success: processJson,
+    	});
+
+    	$("#flavor").change(function(){
+    		if (hide_options[$(this).val()])
+    			$("#options").fadeOut();
+    		else
+    			$("#options").fadeIn();
     	});
 
 		$("#fit-group span").click(function() {
