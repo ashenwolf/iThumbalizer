@@ -118,6 +118,7 @@ class FlavorGenericFixed(FlavorGenericBase):
             self.fit = fit
         else:
             self.fit = None
+
         base_path = os.path.join(os.path.split(__file__)[0], 'base/%s/' % self.flavor_path)
         self.back = open(os.path.join(base_path, 'back.png'), "rb")
         self.reflection = open(os.path.join(base_path, 'reflection.png'), "rb")
@@ -127,10 +128,10 @@ class FlavorGenericFixed(FlavorGenericBase):
 
         for image in image_list[1:]:
             if isinstance(image[0], Image.Image):
-                result.paste(image[0], (image[1], image[2]), image[0])
+                result.paste(image[0].convert("RGB"), (image[1], image[2]), image[0])
             else:
                 tmp = Image.open(image[0])
-                result.paste(tmp, (image[1], image[2]), tmp)
+                result.paste(tmp.convert("RGB"), (image[1], image[2]), tmp)
 
         return result
 
@@ -157,9 +158,9 @@ class FlavorGenericFixed(FlavorGenericBase):
 
     def renderImage(self):
         img = self.mergeImages([
-            (self.back, 0, 0),
-            (self.fitImage().convert("RGBA"), self.offset_x, self.offset_y),
-            (self.reflection, 0, 0),
+            (self.back, 0, 0, True),
+            (self.fitImage().convert("RGBA"), self.offset_x, self.offset_y, False),
+            (self.reflection, 0, 0, True),
             ])
 
         # Create the file
