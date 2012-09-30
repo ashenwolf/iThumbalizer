@@ -150,9 +150,9 @@ class FlavorGenericFixed(FlavorGenericBase):
         elif self.fit == "height":
             k = float(self.height) / image.size[1]
         else:
-            return image.resize((self.width, self.height))
+            return image.resize((self.width, self.height), Image.BICUBIC)
 
-        i1 = image.resize((long(image.size[0] * k), long(image.size[1] * k)))
+        i1 = image.resize((long(image.size[0] * k), long(image.size[1] * k)), Image.BICUBIC)
         i2 = i1.crop((x, y, self.width + x, self.height + y))
         return i2
 
