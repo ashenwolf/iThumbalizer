@@ -38,6 +38,10 @@ body {
 	padding: 16px;
 }
 
+#header a{
+	text-decoration: none;
+}
+
 #footer a {
 	color: #fff;
 }

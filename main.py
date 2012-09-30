@@ -18,7 +18,7 @@ import webapp2
 import jinja2
 import os.path
 
-from views import MainHandler, MakeScreenshot
+from views import MainHandler, MakeScreenshot, AboutHandler
 
 
 class NullUndefined(jinja2.Undefined):
@@ -40,21 +40,12 @@ config = {
             'extensions': ['jinja2.ext.autoescape', 'jinja2.ext.with_'],  # 'jinja2.ext.i18n',
             'undefined': NullUndefined,
             },
-#        'filters': {
-#            'serve_image': misc.filters.serve_image,
-#            'upload_url': misc.filters.upload_url,
-#            'htmlify': misc.filters.htmlify,
-#            'datetime': misc.filters.format_datetime,
-#            },
-#       'globals': {
-#            'url': webapp2.uri_for,
-#            'settings': skolladmin.models.SiteSettings,
-#           },
         },
     'template_path': os.path.join(os.path.dirname(__file__), 'templates/'),
     }
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
-    ('/upload', MakeScreenshot),
+    (r'/upload?', MakeScreenshot),
+    (r'/about/', AboutHandler),
     ], debug=True, config=config)

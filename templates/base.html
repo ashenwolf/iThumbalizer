@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<title>Thumbalize Me!</title>
+	<title>{% block title %}{% endblock %}Thumbalize Me!</title>
 
 	<meta name="description" content="Thumbalize Me is a tool that allows you to surround your screenshot with a gadget border.">
 	<meta name="keywords" content="thumbalize, border, screenshot, gadget, surround, ipad, iphone, nexus one, safari, android">
@@ -13,7 +13,7 @@
 		<!-- header -->
 		<div class="row">
 			<div class="span12" id="header">
-				<h1 style="color: #fff;">Thumbalize Me!</h1>
+				<a href="/" title="Thumbalize Me!"><h1 style="color: #fff;">Thumbalize Me!</h1></a>
 				<h4 style="margin: -14px 0 0 227px;">beta</h4>
 			</div>
 		</div>
@@ -30,17 +30,26 @@
 			<div class="span12" id="footer">
 				<div class="row">
 					<div class="span8">
-						<small><!--&copy; Copyright 2012 |--> <a href="/">Home</a> | <a href="#">About</a>
+						<small><a href="/">Home</a> | <a href="/about/">About</a> <br> &copy; Copyright 2012 Skoll Technologies
 						</small>
 					</div>
 					<div class="span3" id="footer-copyright">
-						<a href="http://www.skoll.com.ua/"><img src="/static/images/skolltech2.png" alt="Skoll Technologies"></a>
+						<!--<a href="http://www.skoll.com.ua/"></a>-->
+						<img src="/static/images/skolltech2.png" alt="Skoll Technologies" title="Skoll Technologies: quality web and software development">
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<script type="text/javascript">
+	  var uvOptions = {};
+	  (function() {
+	    var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+	    uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/qmkgc2cP7kUKBt3A5yz4rw.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+	  })();
+	</script>
 
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];
