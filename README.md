@@ -6,4 +6,4 @@ You may find the working project using the following url: [http://www.thumbalize
 
 ### Platform
 
-It is written in Python and is powered by Google App Engine and GD python module.
+It is written in Python and is powered by Google App Engine and PIL module.
